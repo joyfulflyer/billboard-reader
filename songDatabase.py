@@ -9,7 +9,7 @@ def connect():
 
 	return conn
 
-def getCursor(conn)	:
+def getCursor(conn):
 	print('creating cursor')
 	sys.stdout.flush()
 	c = conn.cursor()
@@ -53,7 +53,16 @@ def saveChart(chart, conn):
 	sys.stdout.flush()
 	print('saving chart')
 	c = conn.cursor()
-	countTuple = c.execute(''' SELECT count(*) from charts WHERE dateString IS ? ''', (chart.date,)).fetchone()
+
+	for i, song in enumerate(chart.entries):
+		c.execute(''' INSERT INTO songs(place, name, artist, dateString) VALUES (?, ?, ?, ?) ''', (i, song.title, song.artist, chart.date))
+	print('getting new chart')
+	sys.stdout.flush()
+	conn.commit()
+
+def doesDatabaseContainDate(date, conn):
+	c = conn.cursor()
+	countTuple = c.execute(''' SELECT count(*) from charts WHERE dateString IS ? ''', (date,)).fetchone()
 	count = countTuple[0]
 	if count > 0:
 		print("count > 0")
@@ -63,11 +72,7 @@ def saveChart(chart, conn):
 	except sqlite3.IntegrityError:
 		print("chart exists")
 		return
-	for i, song in enumerate(chart.entries):
-		c.execute(''' INSERT INTO songs(place, name, artist, dateString) VALUES (?, ?, ?, ?) ''', (i, song.title, song.artist, chart.date))
-	print('getting new chart')
-	sys.stdout.flush()
-	conn.commit()
+
 
 def scrapeDataForYear(year, conn):
 	finalDate = getFinalDate(year)
