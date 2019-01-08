@@ -15,5 +15,9 @@ class Song:
 
 	@classmethod
 	def fromTuple(cls, tuple):
-		return cls(tuple[1], tuple[2], tuple[3], tuple[4])
+		return cls(tuple[0], tuple[1], tuple[2], tuple[3])
+
+	@staticmethod
+	def songsEqual(songOne, songTwo):
+		return songOne.name == songTwo.name and songOne.artist == songTwo.artist
 

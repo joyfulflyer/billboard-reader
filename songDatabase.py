@@ -72,13 +72,14 @@ def doesDatabaseContainDate(date, conn):
 	return count > 0
 
 
-def scrapeDataForYear(year, conn):
+def scrapeDataForYear(year, conn, onYearDone):
 	finalDate = getFinalDate(year)
 	lastChart = billboard.ChartData('hot-100', date=finalDate, fetch=True, timeout=30)
 	prevYear = getPreviousYear(year)
 	chart = lastChart
 	while(chart.previousDate and prevYear not in chart.date):
 		saveChart(chart, conn)
+		onYearDone()
 		chart = billboard.ChartData('hot-100', chart.previousDate)
 
 def getFinalDate(year):
@@ -92,3 +93,11 @@ def hasData(conn):
 	c = getCursor(conn)
 	c.execute(''' SELECT count(*) FROM songs ''')
 	data = c.fetchall()
+
+#Grabs all the songs in the database as a list. Assumes it's of an ok size to have in memory
+def getAllSavedSongs():
+	conn = connect()
+	c = conn.cursor()
+	songs = c.execute('SELECT * FROM songs').fetchall()
+	conn.close()
+	return songs

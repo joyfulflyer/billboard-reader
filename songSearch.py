@@ -4,9 +4,12 @@ def getSongsFromName(name, conn):
 	return conn.cursor().execute('SELECT * FROM songs WHERE name LIKE ?', (name,)).fetchall()
 
 def getSongObjectsFromName(name, conn):
-	return map(lambda x: Song.fromTuple(x), getSongsFromName(name, conn))
+	return convertToSongObjects(getSongsFromName(name, conn))
 
-def getLowestPlaceSong(listOfSongs):
+def convertToSongObjects(list):
+	return map(lambda x: Song.fromTuple(x), list)
+
+def getFirstLowestPlaceSong(listOfSongs):
 	return min(listOfSongs, byPlace)
 
 def byPlace(songObject):
@@ -20,3 +23,33 @@ def getTheRestOfTheWeeksSongs(song, conn):
 
 def sortByPlace(listOfSongs):
 	return sorted(listOfSongs, byPlace)
+
+def getSongsWithName(listOfSongs, name):
+	return filter(lambda song: song.name == name, listOfSongs)
+
+def getSongsThatMatchArtist(list, artist):
+	return filter(getFunctionToGetArtist(artist), list)
+
+def getFunctionToGetArtist(artistToMatch):
+	def theFunctionToCall(song):
+		return song.artist == artistToMatch
+	return theFunctionToCall
+
+def matchNameAndArtist(song, list):
+	def matchesNameAndArtist(itemInList):
+		return song.artist == itemInList.artist and song.name == itemInList.name
+	return filter(matchNameAndArtist, list)
+
+# Get the lowest chart entries as a list from a song
+def getLowestChartEntries(song, songList):
+	sameSongs = matchNameAndArtist(song, songList)
+	m = getFirstLowestPlaceSong(sameSongs)
+	mins = filter(lambda s: s.place == m.place, sameSongs)
+	return mins
+
+def getFirstLowestChartEntryForSong(song, songlist):
+	sameSongs = matchNameAndArtist(song, songList)
+	return getFirstLowestPlaceSong(sameSongs)
+
+def getHot100ForWeekOfSong(song, fullListOfSongs):
+	return list(sorted(filter(lambda s: s.date == song.date, fullListOfSongs), byPlace))
