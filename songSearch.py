@@ -53,3 +53,23 @@ def getFirstLowestChartEntryForSong(song, songlist):
 
 def getHot100ForWeekOfSong(song, fullListOfSongs):
 	return list(sorted(filter(lambda s: s.date == song.date, fullListOfSongs), byPlace))
+
+def removeDupes(songList):
+	solo = []
+	for i in range(len(songList)):
+		cur = songList[i]
+	#	println("cur = " + cur)
+		found = False
+		for y in range(i+1, len(songList)):
+			comp = songList[y]
+			if cur == comp:
+				found = True
+				break
+		if not found:
+			solo.append(cur)
+
+
+
+
+
+	return solo
