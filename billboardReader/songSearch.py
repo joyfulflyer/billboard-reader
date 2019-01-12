@@ -1,4 +1,4 @@
-from song import Song
+from billboardReader.song import Song
 
 def getSongsFromName(name, conn):
 	return conn.cursor().execute('SELECT * FROM songs WHERE name LIKE ?', (name,)).fetchall()
@@ -22,10 +22,10 @@ def getTheRestOfTheWeeksSongs(song, conn):
 	return conn.cursor().execute('SELECT * FROM songs WHERE dateString = ?', (song.date,)).fetchall()
 
 def sortByPlace(listOfSongs):
-	return sorted(listOfSongs, byPlace)
+	return sorted(listOfSongs, key=byPlace)
 
 def getSongsWithName(listOfSongs, name):
-	return filter(lambda song: song.name == name, listOfSongs)
+	return filter(lambda song: name.lower() in song.name.lower(), listOfSongs)
 
 def getSongsThatMatchArtist(list, artist):
 	return filter(getFunctionToGetArtist(artist), list)
@@ -52,10 +52,11 @@ def getFirstLowestChartEntryForSong(song, songlist):
 	return getFirstLowestPlaceSong(sameSongs)
 
 def getHot100ForWeekOfSong(song, fullListOfSongs):
-	return list(sorted(filter(lambda s: s.date == song.date, fullListOfSongs), byPlace))
+	return list(sorted(filter(lambda s: s.date == song.date, fullListOfSongs), key=byPlace))
 
 def removeDupes(songList):
 	solo = []
+	songList = list(songList)
 	for i in range(len(songList)):
 		cur = songList[i]
 	#	println("cur = " + cur)

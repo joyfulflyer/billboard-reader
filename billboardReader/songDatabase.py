@@ -94,6 +94,11 @@ def hasData(conn):
 	c.execute(''' SELECT count(*) FROM songs ''')
 	data = c.fetchall()
 
+def getSavedSongsFromConnection(conn):
+	c = conn.cursor()
+	songs = c.execute('SELECT * FROM songs').fetchall()
+	return songs
+
 #Grabs all the songs in the database as a list. Assumes it's of an ok size to have in memory
 def getAllSavedSongs():
 	conn = connect()
