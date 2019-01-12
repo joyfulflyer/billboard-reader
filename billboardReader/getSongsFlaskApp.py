@@ -9,13 +9,13 @@ app = Flask(__name__)
 
 @app.route("/partialSong/<input>")
 def partialSong(input):
-	data = DataSource().getSongsWithPartialName(input)
-	return str(json.dumps(data))
+    data = DataSource().getSongsWithPartialName(input)
+    return str(json.dumps(data))
 
 
 def start():
-	app.run()
+    app.run()
 
 # uncomment for flask
 if __name__ == "__main__":
-	app.run()
+    app.run()
