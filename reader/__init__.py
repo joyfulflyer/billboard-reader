@@ -1,15 +1,16 @@
 import os
+from . import flask_db
+from flask import Flask
 
-from flask import flask
 
-def create_app(testConfig = None):
+def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-            SECRET_KEY='dev',
-            DATABASE=os.path.join(app.instance_path, 'charts.db'),
-        )
+        SECRET_KEY='dev',
+        DATABASE=os.path.join(app.instance_path, 'charts.db'),
+    )
 
-    if test_config is NONE:
+    if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
     else:
@@ -21,5 +22,10 @@ def create_app(testConfig = None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    flask_db.init_app(app)
+
+    from . import find_song
+    app.register_blueprint(find_song.bp)
 
     return app

@@ -1,7 +1,7 @@
 import unittest
-from context import billboardReader
-import billboardReader.songSearch as songSearch
-from billboardReader.song import Song
+from context import reader
+import reader.songSearch as songSearch
+from reader.song import Song
 
 class TestSongSearch(unittest.TestCase):
     def test_remove_dupes(self):
