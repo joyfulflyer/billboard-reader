@@ -3,6 +3,7 @@ from flask import(
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from . flask_db import get_db
+import json
 
 bp = Blueprint('/search', __name__, url_prefix='/')
 
@@ -21,4 +22,6 @@ def search_results():
 
 @bp.route('/partialSong/<input>', methods=("GET",))
 def partial_song(input):
-    return "This should be json"
+    print("Getting " + input)
+    songs = get_db().execute('SELECT DISTINCT name, artist FROM songs WHERE UPPER(name) LIKE UPPER(?)', ('%'+input+'%',)).fetchall()
+    return str(songs)
