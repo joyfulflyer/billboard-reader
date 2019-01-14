@@ -9,9 +9,16 @@ bp = Blueprint('/search', __name__, url_prefix='/')
 
 @bp.route('/search', methods=("GET", "POST"))
 def search():
+    if request.method == 'POST':
+        return redirect(url_for('search_results'))
     return render_template('search.html')
 
 
+@bp.route('/search_results', methods=("GET",))
+def search_results():
+    return render_template('search_results.html')
+
+
 @bp.route('/partialSong/<input>', methods=("GET",))
-def partialSong(imput):
+def partial_song(input):
     return "This should be json"
