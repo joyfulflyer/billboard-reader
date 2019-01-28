@@ -10,7 +10,7 @@ def grabBetween(startYear, endYear):
     conn = songDatabase.connect()
     r = range(startYear, endYear - 1, -1)
     numYears = len(r)
-    assumedMax = numYears * 52
+    assumedMax = numYears * 52 + 1
     currentYear = 0
     printProgressBar.printProgressBar(0, assumedMax,
                                       prefix="Progress: ", suffix=" Complete")

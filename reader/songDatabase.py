@@ -1,6 +1,7 @@
 import sys
 import billboard
 import sqlite3
+import datetime
 
 
 def connect():
@@ -22,6 +23,7 @@ def dropTables(conn):
     print('dropping table')
     c.execute(''' DROP TABLE IF EXISTS songs''')
     c.execute(''' DROP TABLE IF EXISTS charts ''')
+    c.execute(''' DROP TABLE IF EXISTS entries ''')
     sys.stdout.flush()
 
 
@@ -34,17 +36,30 @@ def connectAndCreate():
 def createTables(conn):
     c = conn.cursor()
     print("creating table")
-    c.execute(''' CREATE TABLE IF NOT EXISTS songs
-                    (place integer, name text, artist text,
-                    dateString text) ''')
+    c.execute(''' CREATE TABLE IF NOT EXISTS entries
+                    (id integer primary key,
+                    name text,
+                    artist text,
+                    place integer,
+                    peak_position integer,
+                    last_position integer,
+                    weeks_on_chart integer,
+                    chart_id integer,
+                    song_id integer) ''')
     c.execute(''' CREATE TABLE IF NOT EXISTS charts
-                    (type text, dateString text unique) ''')
+                    (id integer primary key,
+                    type text,
+                    date_string text unique) ''')
+    c.execute(''' CREATE TABLE IF NOT EXISTS songs
+                    (id integer primary key,
+                    name text,
+                    artist text)''')
     conn.commit()
     sys.stdout.flush()
 
 
 def getInitialChart():
-    chart = billboard.ChartData('hot-100', date='2018-10-13',
+    chart = billboard.ChartData('hot-100',
                                 fetch=True, timeout=30)
     return chart
 
@@ -58,21 +73,39 @@ def scrapeDataFromChartIntoConnection(chart, conn):
 def saveChart(chart, conn):
     c = conn.cursor()
     try:
-        c.execute(''' INSERT INTO charts(type, dateString)
+        c.execute(''' INSERT INTO charts(type, date_string)
                   VALUES (?, ?) ''', ("hot-100", chart.date))
+        conn.commit()
     except sqlite3.IntegrityError:
         return
-    for i, song in enumerate(chart.entries):
-        c.execute(''' INSERT INTO songs(place, name, artist, dateString)
-                  VALUES (?, ?, ?, ?) ''',
-                  (i, song.title, song.artist, chart.date))
+    rowId = c.lastrowid
+    for i, entry in enumerate(chart.entries):
+        c.execute(''' INSERT INTO entries(
+                  name, artist, place, peak_position,
+                  last_position, weeks_on_chart, chart_id)
+                  VALUES (?, ?, ?, ?, ?, ?, ?) ''',
+                  (entry.title, entry.artist, entry.rank,
+                   entry.peakPos, entry.lastPos, entry.weeks,
+                   rowId))
+
     conn.commit()
+
+
+def crawlEntriesForSongs(cursor):
+    songs = []
+
+    # gives me the distinct name/artist combos
+    entries = cursor.execute(''' SELECT DISTINCT name, artist FROM entries ''').fetchone()
+    entry = cursor.execute(''' SELECT * FROM entries WHERE name = ? AND artist = ? ''', (entries[0], entries[1])).fetchall()
+    return entry
+
+
 
 
 def doesDatabaseContainDate(date, conn):
     c = conn.cursor()
     countTuple = c.execute(''' SELECT count(*) from charts
-                           WHERE dateString IS ? ''', (date,)).fetchone()
+                           WHERE date_string IS ? ''', (date,)).fetchone()
     count = countTuple[0]
     return count > 0
 
@@ -90,7 +123,12 @@ def scrapeDataForYear(year, conn, onYearDone):
 
 
 def getFinalDate(year):
-    finalDate = str(year) + '-12-31'
+    now = datetime.datetime.now()
+    if year == now.year:
+        finalDate = "{}-{:0>2}-{:0>2}".format(now.year, now.month, now.day)
+    else:
+        finalDate = str(year) + '-12-31'
+    print("final date = " + finalDate)
     return finalDate
 
 
