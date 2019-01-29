@@ -7,22 +7,24 @@ import printProgressBar
 
 # Grabs the data from the start year (largest) to end year (smallest) inclusive
 def grabBetween(startYear, endYear):
-    conn = songDatabase.connect()
-    r = range(startYear, endYear - 1, -1)
-    numYears = len(r)
-    assumedMax = numYears * 52 + 1
-    currentYear = 0
-    printProgressBar.printProgressBar(0, assumedMax,
-                                      prefix="Progress: ", suffix=" Complete")
-
-    def onYearDone():
-        nonlocal currentYear
-        currentYear += 1
-        printProgressBar.printProgressBar(currentYear, assumedMax,
+    with songDatabase.connect() as conn:
+        r = range(startYear, endYear - 1, -1)
+        numYears = len(r)
+        assumedMax = numYears * 52 + 1
+        currentYear = 0
+        printProgressBar.printProgressBar(0, assumedMax,
                                           prefix="Progress: ",
                                           suffix=" Complete")
-    for i, y in enumerate(r):
-        songDatabase.scrapeDataForYear(y, conn, onYearDone)
+
+        def onYearDone():
+            nonlocal currentYear
+            currentYear += 1
+            printProgressBar.printProgressBar(currentYear, assumedMax,
+                                              prefix="Progress: ",
+                                              suffix=" Complete")
+        for i, y in enumerate(r):
+            songDatabase.scrapeDataForYear(y, conn, onYearDone)
+    print("Complete")
 
 
 # Makes sure that we always go from the biggest year to the smallest

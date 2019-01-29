@@ -23,7 +23,7 @@ def search_results():
     artist = convertToSpaces(artist)
 
     songs = get_db().execute('''
-            SELECT * FROM songs WHERE name=? AND artist=?
+            SELECT * FROM entries WHERE name=? AND artist=?
                              ''', (name, artist)).fetchall()
     dicts = []
     for s in songs:
@@ -43,10 +43,17 @@ def partial_song(input):
     converted = convertToSpaces(input)
     print("converted = " + converted)
     songs = get_db().execute('''
-            SELECT DISTINCT name, artist FROM songs
+            SELECT DISTINCT name, artist FROM entries
             WHERE UPPER(name) LIKE UPPER(?)
             ''', ('%' + converted + '%',)).fetchall()
     return str(songs)
+
+
+@bp.route('/songnames', methods=("GET",))
+def get_all_song_names():
+    all_songs = get_db().execute('''
+                SELECT DISTINCT name, artist FROM entries ''').fetchall()
+    return json.dumps(all_songs)
 
 
 def convertToSpaces(input):

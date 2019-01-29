@@ -2,7 +2,7 @@ from billboardReader.song import Song
 
 
 def getSongsFromName(name, conn):
-    return conn.cursor().execute('SELECT * FROM songs WHERE name LIKE ?', (name,)).fetchall()
+    return conn.cursor().execute('SELECT * FROM entries WHERE name LIKE ?', (name,)).fetchall()
 
 
 def getSongObjectsFromName(name, conn):
@@ -26,7 +26,7 @@ def minWithTuple(song):
 
 
 def getTheRestOfTheWeeksSongs(song, conn):
-    return conn.cursor().execute('SELECT * FROM songs WHERE dateString = ?', (song.date,)).fetchall()
+    return conn.cursor().execute('SELECT * FROM entries WHERE dateString = ?', (song.date,)).fetchall()
 
 
 def sortByPlace(listOfSongs):

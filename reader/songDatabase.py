@@ -75,7 +75,6 @@ def saveChart(chart, conn):
     try:
         c.execute(''' INSERT INTO charts(type, date_string)
                   VALUES (?, ?) ''', ("hot-100", chart.date))
-        conn.commit()
     except sqlite3.IntegrityError:
         return
     rowId = c.lastrowid
@@ -123,12 +122,13 @@ def scrapeDataForYear(year, conn, onYearDone):
 
 
 def getFinalDate(year):
-    now = datetime.datetime.now()
+    now = datetime.date.today()
+    delt = datetime.timedelta(weeks=1)
+    then = now - delt
     if year == now.year:
-        finalDate = "{}-{:0>2}-{:0>2}".format(now.year, now.month, now.day)
+        finalDate = "{}-{:0>2}-{:0>2}".format(then.year, then.month, then.day)
     else:
         finalDate = str(year) + '-12-31'
-    print("final date = " + finalDate)
     return finalDate
 
 
