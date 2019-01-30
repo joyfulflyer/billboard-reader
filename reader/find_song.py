@@ -8,7 +8,7 @@ import json
 bp = Blueprint('/search', __name__, url_prefix='/')
 
 
-@bp.route('/search', methods=("GET", "POST"))
+@bp.route('/', methods=("GET", "POST"))
 def search():
     if request.method == 'POST':
         return redirect(url_for('search_results'))

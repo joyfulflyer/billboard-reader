@@ -31,4 +31,7 @@ def create_app(test_config=None):
     from . import find_song
     app.register_blueprint(find_song.bp)
 
+    from . import show_song
+    app.register_blueprint(show_song.bp)
+
     return app

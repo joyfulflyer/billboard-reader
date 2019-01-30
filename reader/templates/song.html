@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+ <h1>{% block title %}{{ song.name }}{% endblock %}</h1>
+ <h2>{{ song.artist }}
+{% endblock %}
+
+{% block content %}
+{{ songs }} <p>
+  {% for cur in songs %}
+    <div>
+      {% for e in cur.keys() %}
+        {{ cur[e] }}
+      {% endfor %}
+    </div>
+  {% endfor %}
+{% endblock %}
