@@ -14,14 +14,12 @@ def song_by_id(selected_id):
     if entry is None:
         abort(404, "Not found")
     songs = get_db().execute('''
-                             SELECT * FROM entries
+                             SELECT
+                             name, artist, place, date_string, type
+                             FROM
+                             entries
+                             INNER JOIN charts ON charts.id = entries.chart_id
                              WHERE name = ? AND artist = ?''',
                              (entry["name"], entry["artist"])).fetchall()
-  #  id_list = list(map(lambda x: x["chart_id"], songs))
- #   charts = []
-    for cur in songs:
-        c = get_db().execute('''
-                                   SELECT * FROM charts WHERE id = ?
-                                   ''', (cur["chart_id"],)).fetchone()
 
-    return render_template('song.html', song=entry, songs=charts)
+    return render_template('song.html', song=entry, songs=songs)

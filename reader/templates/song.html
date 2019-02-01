@@ -6,12 +6,7 @@
 {% endblock %}
 
 {% block content %}
-{{ songs }} <p>
   {% for cur in songs %}
-    <div>
-      {% for e in cur.keys() %}
-        {{ cur[e] }}
-      {% endfor %}
-    </div>
+    <div>{{ cur[0] }} by {{ cur[1] }} was at {{ cur[2] }} on <a href="http://www.billboard.com/charts/{{ cur[4] }}/{{ cur[3] }}">{{ cur[3] }}</a></div>
   {% endfor %}
 {% endblock %}
