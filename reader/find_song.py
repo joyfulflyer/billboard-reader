@@ -9,24 +9,26 @@ import json
 bp = Blueprint('/search', __name__, url_prefix='/')
 
 
-@bp.route('/', methods=("GET", "POST"))
+@bp.route('/', methods=("GET",))
 def search():
-    if 'search' in request.args:
-        return redirect(url_for('/search.search_results'))
     return render_template('search.html')
 
 
 @bp.route('/search_results', methods=("GET",))
 def search_results():
-    if 'name' not in request.args:
-        abort(400, "Bad request, very bad")
+    songs = []
+    if 'name' in request.args:
+        name = request.args['name']
+        name = convertToSpaces(name)
+        songs = get_songs_with_name(name)
 
-    name = request.args['name']
-    name = convertToSpaces(name)
-#    artist = request.args['artist']
-#    artist = convertToSpaces(artist)
+    elif 'artist' in request.args:
+        artist = request.args['artist']
+        artist = convertToSpaces(artist)
+        songs = []
 
-    songs = get_songs_with_name(name)
+    else:
+        abort(400, "Bad request")
 
     return json.dumps(convert_rows_to_dict(songs))
 
@@ -34,24 +36,20 @@ def search_results():
 @bp.route('/partialSong/<input>', methods=("GET",))
 @bp.route('/partialSong')
 def partial_song(input):
-    print("raw input " + input)
     converted = convertToSpaces(input)
-    print("converted = " + converted)
     songs = get_songs_with_name(converted)
+    songs = songs[:15]
 
     return json.dumps(convert_rows_to_dict(songs))
 
 
 def get_songs_with_name(song_name):
-    print(song_name)
     whereClause = '%' + song_name + '%'
-    print("where clause: {}".format(whereClause))
     songs = get_db().execute('''
         SELECT * FROM entries
         WHERE UPPER(name) LIKE UPPER(?)
         GROUP BY name, artist
         ORDER BY name
-        LIMIT 15
         ''', (whereClause,)).fetchall()
     return songs
 
