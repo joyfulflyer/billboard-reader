@@ -7,6 +7,7 @@ bp = Blueprint('/song', __name__, url_prefix='/song')
 
 
 @bp.route('/<int:selected_id>')
+@bp.route('/')
 def song_by_id(selected_id):
     entry = get_db().execute('''
                      SELECT * FROM entries WHERE id = ?

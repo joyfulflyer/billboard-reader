@@ -24,7 +24,8 @@ def grabBetween(startYear, endYear):
                                               suffix=" Complete")
         for i, y in enumerate(r):
             songDatabase.scrapeDataForYear(y, conn, onYearDone)
-    print("Complete")
+
+    print("\nAll Done")
 
 
 # Makes sure that we always go from the biggest year to the smallest
