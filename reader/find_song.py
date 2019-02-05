@@ -30,7 +30,7 @@ def search_results():
     else:
         abort(400, "Bad request")
 
-    return json.dumps(convert_rows_to_dict(songs))
+    return render_template('search_results.html', songs=convert_rows_to_dict(songs))
 
 
 @bp.route('/partialSong/<input>', methods=("GET",))
