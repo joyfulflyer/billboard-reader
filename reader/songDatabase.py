@@ -2,6 +2,7 @@ import sys
 import billboard
 import sqlite3
 import datetime
+import time
 
 
 def connect():
@@ -67,7 +68,7 @@ def getInitialChart():
 def scrapeDataFromChartIntoConnection(chart, conn):
     while chart.previousDate and "2017" not in chart.date:
         saveChart(chart, conn)
-        chart = billboard.ChartData('hot-100', chart.previousDate)
+        chart = billboard.ChartData('hot-100', chart.previousDate, timeout=45)
 
 
 def saveChart(chart, conn):
@@ -118,7 +119,8 @@ def scrapeDataForYear(year, conn, onYearDone):
     while(chart.previousDate and prevYear not in chart.date):
         saveChart(chart, conn)
         onYearDone()
-        chart = billboard.ChartData('hot-100', chart.previousDate)
+        time.sleep(10)
+        chart = billboard.ChartData('hot-100', chart.previousDate, timeout=45)
 
 
 def getFinalDate(year):
