@@ -1,6 +1,11 @@
+from reader.models.chart import Chart
+from reader.models.entry import Entry
 
+def saveChart(chart, Session):
+	session = Session()
+	c = Chart(type="hot-100", date_string=chart.date)
+	session.add(c)
 
-def saveChart(chart, conn):
     c = conn.cursor()
     try:
         c.execute(''' INSERT INTO charts(type, date_string)
@@ -8,13 +13,7 @@ def saveChart(chart, conn):
     except sqlite3.IntegrityError:
         return
     rowId = c.lastrowid
-    for i, entry in enumerate(chart.entries):
-        c.execute(''' INSERT INTO entries(
-                  name, artist, place, peak_position,
-                  last_position, weeks_on_chart, chart_id)
-                  VALUES (?, ?, ?, ?, ?, ?, ?) ''',
-                  (entry.title, entry.artist, entry.rank,
-                   entry.peakPos, entry.lastPos, entry.weeks,
-                   rowId))
+    for entry in chart.entries:
+    	e = Entry(name=entry.title, artist=entry.artist, place=entry.rank, peak_position=entry.peakPos, last_position=entry.lastPos, weeks_on_chart=entry.weeks, chart_id=rowId)
 
     conn.commit()
