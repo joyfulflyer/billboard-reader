@@ -9,8 +9,8 @@ class TestSongSearch(unittest.TestCase):
         artistName = "artiist"
         start = [
         Song(0, "firstName", artistName, date),
-        Song(0, "secondName",artistName, date), 
-        Song(0, "firstName", artistName, date), 
+        Song(0, "secondName", artistName, date),
+        Song(0, "firstName", artistName, date),
         Song(0, "secondName", "the artist formerly known as artiist", date)
         ]
         end = songSearch.removeDupes(start)
@@ -26,8 +26,8 @@ class TestSongSearch(unittest.TestCase):
 
         start = [
         Song(0, "firstName", artistName, date),
-        Song(0, "secondName",artistName, date), 
-        Song(0, "firstName", artistName, date), 
+        Song(0, "secondName", artistName, date),
+        Song(0, "firstName", artistName, date),
         Song(0, "secondName", "the artist formerly known as artiist", date)
         ]
         end = songSearch.getSongsWithName(start, "tn")
