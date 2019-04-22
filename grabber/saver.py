@@ -3,7 +3,7 @@ from reader.models.entry import Entry
 import sqlite3
 
 
-def save_chart(chart, Session):
+def save_chart(chart, Session, on_saved):
     session = Session()
     db_chart = Chart(type="hot-100", date_string=chart.date)
     session.add(db_chart)
@@ -26,3 +26,5 @@ def save_chart(chart, Session):
                   chart_id=rowId)
         session.add(e)
     session.commit()
+    if on_saved is not None:
+        on_saved(chart.date)
