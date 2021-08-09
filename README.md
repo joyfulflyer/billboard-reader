@@ -5,3 +5,5 @@ How to start:
 Add in the environment variables flask app = reader and the flask env and run
 
 Make sure you have pipEnv installed and pipenv run application.py
+
+# Project has been deprecated and is no longer maintained
